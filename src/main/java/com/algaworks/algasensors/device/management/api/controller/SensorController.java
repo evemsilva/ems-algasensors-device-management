@@ -1,5 +1,6 @@
 package com.algaworks.algasensors.device.management.api.controller;
 
+import com.algaworks.algasensors.device.management.api.client.SensorMonitoringClient;
 import com.algaworks.algasensors.device.management.api.model.SensorInput;
 import com.algaworks.algasensors.device.management.api.model.SensorOutput;
 import com.algaworks.algasensors.device.management.common.IdGenerator;
@@ -30,6 +31,7 @@ import org.springframework.web.server.ResponseStatusException;
 public class SensorController {
 
     private final SensorRepository sensorRepository;
+    private final SensorMonitoringClient sensorMonitoringClient;
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -87,6 +89,7 @@ public class SensorController {
     public void enable(@PathVariable TSID sensorId) {
         Sensor sensorToEnable = findSensorById(sensorId);
         sensorToEnable.setEnabled(true);
+        sensorMonitoringClient.enableMonitoring(sensorId);
         sensorRepository.saveAndFlush(sensorToEnable);
     }
 
@@ -95,6 +98,7 @@ public class SensorController {
     public void disable(@PathVariable TSID sensorId) {
         Sensor sensorToDisable = findSensorById(sensorId);
         sensorToDisable.setEnabled(false);
+        sensorMonitoringClient.disableMonitoring(sensorId);
         sensorRepository.saveAndFlush(sensorToDisable);
     }
 
